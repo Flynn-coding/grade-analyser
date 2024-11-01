@@ -40,6 +40,8 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-bottom: 15px;
+            /* Allow decimals */
+            step: 0.01;
         }
         button {
             background-color: #28a745;
@@ -131,12 +133,14 @@
                 let totalWeight = 0;
 
                 scores.forEach((score, index) => {
-                    if (score !== null) { // Only consider entered scores
-                        totalWeightedScore += score * (weights[subject][index] / 100); // Multiply score by weight
-                        totalWeight += weights[subject][index]; // Sum the weights of completed assignments
+                    if (score !== null && score >= 0) { // Only consider entered scores and ensure they're not negative
+                        const weight = weights[subject][index];
+                        totalWeightedScore += score * (weight / 100); // Multiply score by weight
+                        totalWeight += weight; // Sum the weights of completed assignments
                     }
                 });
 
+                // Calculate average only if there are completed assignments
                 const average = (totalWeight > 0) ? (totalWeightedScore / totalWeight) : 0;
 
                 // Determine letter grade
@@ -166,5 +170,3 @@
             `;
         };
     </script>
-</body>
-</html>
