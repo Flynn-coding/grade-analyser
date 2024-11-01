@@ -127,16 +127,17 @@
             ['english', 'hass', 'math'].forEach(subject => {
                 const scores = Array.from(document.querySelectorAll(`input[name^="${subject}"]`))
                     .map(input => parseFloat(input.value) || null); // Allow null for empty inputs
-                const totalWeight = weights[subject].reduce((acc, w) => acc + w, 0);
-                const weightedScore = scores.reduce((acc, score, index) => {
-                    if (score !== null) {
-                        return acc + (score * (weights[subject][index] / 100));
+                let totalWeightedScore = 0;
+                let totalWeight = 0;
+
+                scores.forEach((score, index) => {
+                    if (score !== null) { // Only consider entered scores
+                        totalWeightedScore += score * (weights[subject][index] / 100); // Multiply score by weight
+                        totalWeight += weights[subject][index]; // Sum the weights of completed assignments
                     }
-                    return acc; // Ignore if the score is null
-                }, 0);
-                
-                const count = scores.filter(score => score !== null).length; // Count only non-null scores
-                const average = (count > 0) ? (weightedScore / totalWeight) : 0;
+                });
+
+                const average = (totalWeight > 0) ? (totalWeightedScore / totalWeight) : 0;
 
                 // Determine letter grade
                 let letterGrade;
