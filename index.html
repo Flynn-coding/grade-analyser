@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Analyzer</title>
+</head>
+<body>
+    <h1>Upload Assignment Grades CSV</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" accept=".csv" required />
+        <button type="submit">Analyze Grades</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById("uploadForm").onsubmit = async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append("file", document.getElementById("fileInput").files[0]);
+
+            const response = await fetch("/upload", {
+                method: "POST",
+                body: formData,
+            });
+            
+            const result = await response.json();
+            document.getElementById("results").innerText = JSON.stringify(result, null, 2);
+        };
+    </script>
+</body>
+</html>
