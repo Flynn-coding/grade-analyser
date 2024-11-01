@@ -6,29 +6,112 @@
     <title>Grade Analyzer</title>
 </head>
 <body>
-    <h1>Upload Assignment Grades CSV</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" id="fileInput" accept=".csv" required />
-        <button type="submit">Analyze Grades</button>
+    <h1>Enter Your Scores</h1>
+    
+    <form id="gradeForm">
+        <h2>English</h2>
+        <input type="checkbox" id="english" checked> Include English Grades<br>
+        <label for="digital_story">Task 1 (Digital Story - 12.5%):</label>
+        <input type="number" id="digital_story" min="0" max="100><br>
+        <label for="ad_response">Task 2 (Ad Response - 5%):</label>
+        <input type="number" id="ad_response" min="0" max="100><br>
+        <label for="in_class_essay">Task 3 (In-Class Essay - 11%):</label>
+        <input type="number" id="in_class_essay" min="0" max="100><br>
+        <label for="sem2_exam">Task 4 (Semester 2 Exam - 15%):</label>
+        <input type="number" id="sem2_exam" min="0" max="100><br>
+        <label for="multimodal">Task 5 (Multimodal Presentation - 13%):</label>
+        <input type="number" id="multimodal" min="0" max="100><br>
+        <label for="essay_on_film">Task 6 (Essay on Film - 13%):</label>
+        <input type="number" id="essay_on_film" min="0" max="100><br>
+        <label for="feature_article">Task 7 (Feature Article - 12.5%):</label>
+        <input type="number" id="feature_article" min="0" max="100><br>
+        <label for="final_assessment">Task 8 (Final Assessment - 18%):</label>
+        <input type="number" id="final_assessment" min="0" max="100><br>
+
+        <h2>Math</h2>
+        <input type="checkbox" id="math" checked> Include Math Grades<br>
+        <label for="linear_relationships">Test 1 (5%):</label>
+        <input type="number" id="linear_relationships" min="0" max="100><br>
+        <label for="statistics">Test 2 (7%):</label>
+        <input type="number" id="statistics" min="0" max="100><br>
+        <label for="algebra_quadratics">Test 3 (8%):</label>
+        <input type="number" id="algebra_quadratics" min="0" max="100><br>
+        <label for="investigation_1">Investigation 1 (7%):</label>
+        <input type="number" id="investigation_1" min="0" max="100><br>
+        <label for="sem1_exam">Semester 1 Exam (18%):</label>
+        <input type="number" id="sem1_exam" min="0" max="100><br>
+
+        <button type="submit">Calculate Grades</button>
     </form>
 
     <div id="results"></div>
 
     <script>
-        document.getElementById("uploadForm").onsubmit = async (event) => {
+        document.getElementById("gradeForm").onsubmit = async (event) => {
             event.preventDefault();
 
-            const formData = new FormData();
-            formData.append("file", document.getElementById("fileInput").files[0]);
+            const grades = {
+                english: document.getElementById("english").checked,
+                digital_story: parseFloat(document.getElementById("digital_story").value) || 0,
+                ad_response: parseFloat(document.getElementById("ad_response").value) || 0,
+                in_class_essay: parseFloat(document.getElementById("in_class_essay").value) || 0,
+                sem2_exam: parseFloat(document.getElementById("sem2_exam").value) || 0,
+                multimodal: parseFloat(document.getElementById("multimodal").value) || 0,
+                essay_on_film: parseFloat(document.getElementById("essay_on_film").value) || 0,
+                feature_article: parseFloat(document.getElementById("feature_article").value) || 0,
+                final_assessment: parseFloat(document.getElementById("final_assessment").value) || 0,
+                math: document.getElementById("math").checked,
+                linear_relationships: parseFloat(document.getElementById("linear_relationships").value) || 0,
+                statistics: parseFloat(document.getElementById("statistics").value) || 0,
+                algebra_quadratics: parseFloat(document.getElementById("algebra_quadratics").value) || 0,
+                investigation_1: parseFloat(document.getElementById("investigation_1").value) || 0,
+                sem1_exam: parseFloat(document.getElementById("sem1_exam").value) || 0,
+            };
 
-            const response = await fetch("/upload", {
-                method: "POST",
-                body: formData,
-            });
-            
-            const result = await response.json();
-            document.getElementById("results").innerText = JSON.stringify(result, null, 2);
+            const results = calculateGrades(grades);
+            document.getElementById("results").innerText = JSON.stringify(results, null, 2);
         };
+
+        function calculateGrades(grades) {
+            const englishWeights = {
+                digital_story: 0.125,
+                ad_response: 0.05,
+                in_class_essay: 0.11,
+                sem2_exam: 0.15,
+                multimodal: 0.13,
+                essay_on_film: 0.13,
+                feature_article: 0.125,
+                final_assessment: 0.18,
+            };
+
+            const mathWeights = {
+                linear_relationships: 0.05,
+                statistics: 0.07,
+                algebra_quadratics: 0.08,
+                investigation_1: 0.07,
+                sem1_exam: 0.18,
+            };
+
+            let results = {};
+
+            if (grades.english) {
+                const totalWeight = Object.values(englishWeights).reduce((a, b) => a + b, 0);
+                const weightedScore = Object.keys(englishWeights).reduce((sum, key) => {
+                    return sum + (grades[key] * englishWeights[key]);
+                }, 0);
+                results.englishGrade = weightedScore / totalWeight;
+            }
+
+            if (grades.math) {
+                const totalWeight = Object.values(mathWeights).reduce((a, b) => a + b, 0);
+                const weightedScore = Object.keys(mathWeights).reduce((sum, key) => {
+                    return sum + (grades[key] * mathWeights[key]);
+                }, 0);
+                results.mathGrade = weightedScore / totalWeight;
+            }
+
+            return results;
+        }
     </script>
 </body>
 </html>
