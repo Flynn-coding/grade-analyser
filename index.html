@@ -5,9 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Calculator</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .subject-section { margin-bottom: 20px; }
-        .subject-title { font-weight: bold; font-size: 1.2em; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        .subject-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .subject-title {
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #0056b3;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 1em;
+            display: block;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #results h2 {
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -15,40 +72,40 @@
     <form id="gradeForm">
         <div class="subject-section" id="englishSection">
             <div class="subject-title">English</div>
-            <label>Task 1 (Digital Story - 12.5%): <input type="number" name="englishTask1" /></label><br>
-            <label>Task 2 (Short Paragraph - 5%): <input type="number" name="englishTask2" /></label><br>
-            <label>Task 3 (In-Class Essay - 11%): <input type="number" name="englishTask3" /></label><br>
-            <label>Task 4 (Semester 2 Exam - 15%): <input type="number" name="englishTask4" /></label><br>
-            <label>Task 5 (Multimodal Presentation - 13%): <input type="number" name="englishTask5" /></label><br>
-            <label>Task 6 (Essay on a Film - 13%): <input type="number" name="englishTask6" /></label><br>
-            <label>Task 7 (Feature Article - 12.5%): <input type="number" name="englishTask7" /></label><br>
-            <label>Task 8 (Semester 2 Exam - 18%): <input type="number" name="englishTask8" /></label><br>
+            <label>Task 1 (Digital Story - 12.5%): <input type="number" name="englishTask1" /></label>
+            <label>Task 2 (Short Paragraph - 5%): <input type="number" name="englishTask2" /></label>
+            <label>Task 3 (In-Class Essay - 11%): <input type="number" name="englishTask3" /></label>
+            <label>Task 4 (Semester 2 Exam - 15%): <input type="number" name="englishTask4" /></label>
+            <label>Task 5 (Multimodal Presentation - 13%): <input type="number" name="englishTask5" /></label>
+            <label>Task 6 (Essay on a Film - 13%): <input type="number" name="englishTask6" /></label>
+            <label>Task 7 (Feature Article - 12.5%): <input type="number" name="englishTask7" /></label>
+            <label>Task 8 (Semester 2 Exam - 18%): <input type="number" name="englishTask8" /></label>
         </div>
 
         <div class="subject-section" id="hassSection">
             <div class="subject-title">HASS</div>
-            <label>Task 1 (Environmental Changes - 25%): <input type="number" name="hassTask1" /></label><br>
-            <label>Task 2 (Human Wellbeing Test - 25%): <input type="number" name="hassTask2" /></label><br>
-            <label>Task 3 (End of Semester One Exam - 25%): <input type="number" name="hassTask3" /></label><br>
-            <label>Task 4 (Source Analysis - 25%): <input type="number" name="hassTask4" /></label><br>
-            <label>Task 5 (Oral Presentation - 25%): <input type="number" name="hassTask5" /></label><br>
-            <label>Task 6 (In-Class Essay - 25%): <input type="number" name="hassTask6" /></label><br>
-            <label>Task 7 (End of Semester Two Exam - 25%): <input type="number" name="hassTask7" /></label><br>
+            <label>Task 1 (Environmental Changes - 25%): <input type="number" name="hassTask1" /></label>
+            <label>Task 2 (Human Wellbeing Test - 25%): <input type="number" name="hassTask2" /></label>
+            <label>Task 3 (End of Semester One Exam - 25%): <input type="number" name="hassTask3" /></label>
+            <label>Task 4 (Source Analysis - 25%): <input type="number" name="hassTask4" /></label>
+            <label>Task 5 (Oral Presentation - 25%): <input type="number" name="hassTask5" /></label>
+            <label>Task 6 (In-Class Essay - 25%): <input type="number" name="hassTask6" /></label>
+            <label>Task 7 (End of Semester Two Exam - 25%): <input type="number" name="hassTask7" /></label>
         </div>
 
         <div class="subject-section" id="mathSection">
             <div class="subject-title">Math</div>
-            <label>Test 1 (Linear Relationships - 5%): <input type="number" name="mathTest1" /></label><br>
-            <label>Test 2 (Statistics - 7%): <input type="number" name="mathTest2" /></label><br>
-            <label>Test 3 (Algebra and Quadratics - 8%): <input type="number" name="mathTest3" /></label><br>
-            <label>Investigation 1 (Quadratics - 7%): <input type="number" name="mathInvestigation1" /></label><br>
-            <label>Semester One Exam - 18%: <input type="number" name="mathExam1" /></label><br>
-            <label>Topic Test 5 - 15%: <input type="number" name="mathTopicTest5" /></label><br>
-            <label>Topic Test 6 - 15%: <input type="number" name="mathTopicTest6" /></label><br>
-            <label>Topic Test 7 - 15%: <input type="number" name="mathTopicTest7" /></label><br>
-            <label>Topic Test 8 - 15%: <input type="number" name="mathTopicTest8" /></label><br>
-            <label>Investigation 2 (Finance - 10%): <input type="number" name="mathInvestigation2" /></label><br>
-            <label>Semester 2 Exam - 25%: <input type="number" name="mathExam2" /></label><br>
+            <label>Test 1 (Linear Relationships - 5%): <input type="number" name="mathTest1" /></label>
+            <label>Test 2 (Statistics - 7%): <input type="number" name="mathTest2" /></label>
+            <label>Test 3 (Algebra and Quadratics - 8%): <input type="number" name="mathTest3" /></label>
+            <label>Investigation 1 (Quadratics - 7%): <input type="number" name="mathInvestigation1" /></label>
+            <label>Semester One Exam - 18%: <input type="number" name="mathExam1" /></label>
+            <label>Topic Test 5 - 15%: <input type="number" name="mathTopicTest5" /></label>
+            <label>Topic Test 6 - 15%: <input type="number" name="mathTopicTest6" /></label>
+            <label>Topic Test 7 - 15%: <input type="number" name="mathTopicTest7" /></label>
+            <label>Topic Test 8 - 15%: <input type="number" name="mathTopicTest8" /></label>
+            <label>Investigation 2 (Finance - 10%): <input type="number" name="mathInvestigation2" /></label>
+            <label>Semester 2 Exam - 25%: <input type="number" name="mathExam2" /></label>
         </div>
 
         <button type="submit">Calculate Grades</button>
@@ -69,19 +126,42 @@
             // Calculate grades for each subject
             ['english', 'hass', 'math'].forEach(subject => {
                 const scores = Array.from(document.querySelectorAll(`input[name^="${subject}"]`))
-                    .map(input => parseFloat(input.value) || 0); // Default to 0 if not provided
+                    .map(input => parseFloat(input.value) || null); // Allow null for empty inputs
                 const totalWeight = weights[subject].reduce((acc, w) => acc + w, 0);
-                const weightedScore = scores.reduce((acc, score, index) => acc + (score * (weights[subject][index] / 100)), 0);
-                const average = (totalWeight > 0) ? (weightedScore / totalWeight) : 0;
-                results[subject] = average;
+                const weightedScore = scores.reduce((acc, score, index) => {
+                    if (score !== null) {
+                        return acc + (score * (weights[subject][index] / 100));
+                    }
+                    return acc; // Ignore if the score is null
+                }, 0);
+                
+                const count = scores.filter(score => score !== null).length; // Count only non-null scores
+                const average = (count > 0) ? (weightedScore / totalWeight) : 0;
+
+                // Determine letter grade
+                let letterGrade;
+                if (average < 50) {
+                    letterGrade = "F";
+                } else if (average < 65) {
+                    letterGrade = "C";
+                } else if (average < 75) {
+                    letterGrade = "B";
+                } else {
+                    letterGrade = "A";
+                }
+
+                results[subject] = {
+                    average: average.toFixed(2),
+                    letter: letterGrade
+                };
             });
 
             // Display results
             document.getElementById("results").innerHTML = `
                 <h2>Calculated Grades:</h2>
-                <p>English: ${results.english.toFixed(2)}%</p>
-                <p>HASS: ${results.hass.toFixed(2)}%</p>
-                <p>Math: ${results.math.toFixed(2)}%</p>
+                <p><strong>English:</strong> ${results.english.average}% (${results.english.letter})</p>
+                <p><strong>HASS:</strong> ${results.hass.average}% (${results.hass.letter})</p>
+                <p><strong>Math:</strong> ${results.math.average}% (${results.math.letter})</p>
             `;
         };
     </script>
