@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Calculator</title>
+    <title>Grade Calculator with Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,8 +65,30 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        #results h2 {
-            margin-top: 0;
+        #trendAnalysis {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e2e6ea;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #charts {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        canvas {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 48%;
+        }
+        #improvementSuggestions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #d1ecf1;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -114,15 +137,28 @@
     </form>
 
     <div id="results"></div>
+    <div id="trendAnalysis"></div>
+    <div id="charts">
+        <canvas id="scoreChart"></canvas>
+        <canvas id="trendChart"></canvas>
+    </div>
+    <div id="improvementSuggestions"></div>
 
     <script>
         document.getElementById("gradeForm").onsubmit = function(event) {
             event.preventDefault();
             const results = {};
+            const trends = { high: [], low: [] };
             const weights = {
                 english: [12.5, 5, 11, 15, 13, 13, 12.5, 18],
                 hass: [25, 25, 25, 25, 25, 25, 25],
                 math: [5, 7, 8, 7, 18, 15, 15, 15, 15, 10, 25]
+            };
+
+            const scoresData = {
+                english: [],
+                hass: [],
+                math: []
             };
 
             // Calculate grades for each subject
@@ -133,17 +169,22 @@
                 let totalWeight = 0;
 
                 scores.forEach((score, index) => {
-                    if (score !== null && score >= 0) { // Only consider entered scores and ensure they're not negative
+                    if (score !== null) {
                         const weight = weights[subject][index];
-                        totalWeightedScore += score * (weight / 100); // Multiply score by weight
-                        totalWeight += weight; // Sum the weights of completed assignments
+                        totalWeightedScore += (score * weight) / 100; // Adjust by weight
+                        totalWeight += weight;
+                        // Track high and low scores
+                        if (score >= 75) {
+                            trends.high.push({ type: getTaskType(subject, index), score: score });
+                        } else if (score < 50) {
+                            trends.low.push({ type: getTaskType(subject, index), score: score });
+                        }
                     }
                 });
 
-                // Calculate average only if there are completed assignments
-                const average = (totalWeight > 0) ? (totalWeightedScore / totalWeight) : 0;
+                const average = totalWeight > 0 ? totalWeightedScore / totalWeight : 0;
 
-                // Determine letter grade based on the new grading scale
+                // Determine letter grade
                 let letterGrade;
                 if (average < 0.5) {
                     letterGrade = "F";
@@ -159,6 +200,9 @@
                     average: (average * 100).toFixed(2), // Convert to percentage for display
                     letter: letterGrade
                 };
+
+                // Store scores for charting
+                scoresData[subject] = scores.filter(score => score !== null);
             });
 
             // Display results
@@ -168,7 +212,124 @@
                 <p><strong>HASS:</strong> ${results.hass.average}% (${results.hass.letter})</p>
                 <p><strong>Math:</strong> ${results.math.average}% (${results.math.letter})</p>
             `;
+
+            // Display trend analysis
+            displayTrendAnalysis(trends);
+
+            // Generate charts
+            generateCharts(scoresData);
         };
+
+        function getTaskType(subject, index) {
+            const taskTypes = {
+                english: ['presentation', 'essay', 'essay', 'exam', 'presentation', 'essay', 'article', 'exam'],
+                hass: ['project', 'test', 'exam', 'analysis', 'presentation', 'essay', 'exam'],
+                math: ['test', 'test', 'test', 'investigation', 'exam', 'test', 'test', 'test', 'test', 'investigation', 'exam']
+            };
+            return taskTypes[subject][index] || 'unknown';
+        }
+
+        function displayTrendAnalysis(trends) {
+            const highScores = trends.high.length > 0 ? 
+                trends.high.map(item => `${item.type} (${item.score})`).join(', ') : 
+                "No high scores.";
+
+            const lowScores = trends.low.length > 0 ? 
+                trends.low.map(item => `${item.type} (${item.score})`).join(', ') : 
+                "No low scores.";
+
+            const suggestions = [];
+            if (trends.low.length > 0) {
+                suggestions.push("Consider focusing on low-scoring areas: " + lowScores);
+            }
+            if (trends.high.length > 0) {
+                suggestions.push("Great job on high-scoring areas: " + highScores);
+            }
+
+            document.getElementById("trendAnalysis").innerHTML = `
+                <h2>Trend Analysis:</h2>
+                <p><strong>High Scores:</strong> ${highScores}</p>
+                <p><strong>Low Scores:</strong> ${lowScores}</p>
+            `;
+
+            document.getElementById("improvementSuggestions").innerHTML = `
+                <h2>Improvement Suggestions:</h2>
+                <p>${suggestions.join('<br>')}</p>
+            `;
+        }
+
+        function generateCharts(scoresData) {
+            // Data for charts
+            const subjects = ['english', 'hass', 'math'];
+            const chartData = subjects.map(subject => {
+                return {
+                    label: subject.charAt(0).toUpperCase() + subject.slice(1),
+                    data: scoresData[subject],
+                    borderColor: getColorForSubject(subject),
+                    backgroundColor: getColorForSubject(subject, true)
+                };
+            });
+
+            // Score Chart
+            const ctx1 = document.getElementById('scoreChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: Math.max(...scoresData.english.length, scoresData.hass.length, scoresData.math.length) }, (_, i) => `Task ${i + 1}`),
+                    datasets: chartData
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Scores (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Trend Chart
+            const ctx2 = document.getElementById('trendChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: subjects.map(subject => subject.charAt(0).toUpperCase() + subject.slice(1)),
+                    datasets: [{
+                        label: 'Average Score',
+                        data: subjects.map(subject => {
+                            const totalScore = scoresData[subject].reduce((a, b) => a + b, 0);
+                            return totalScore / (scoresData[subject].length || 1);
+                        }),
+                        backgroundColor: subjects.map(getColorForSubject),
+                        borderColor: subjects.map(getColorForSubject),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Average Scores (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function getColorForSubject(subject, isBackground = false) {
+            const colors = {
+                english: isBackground ? 'rgba(255, 99, 132, 0.2)' : 'rgba(255, 99, 132, 1)',
+                hass: isBackground ? 'rgba(54, 162, 235, 0.2)' : 'rgba(54, 162, 235, 1)',
+                math: isBackground ? 'rgba(75, 192, 192, 0.2)' : 'rgba(75, 192, 192, 1)'
+            };
+            return colors[subject] || 'rgba(0, 0, 0, 1)';
+        }
     </script>
 </body>
 </html>
