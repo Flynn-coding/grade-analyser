@@ -143,20 +143,20 @@
                 // Calculate average only if there are completed assignments
                 const average = (totalWeight > 0) ? (totalWeightedScore / totalWeight) : 0;
 
-                // Determine letter grade
+                // Determine letter grade based on the new grading scale
                 let letterGrade;
-                if (average < 50) {
+                if (average < 0.5) {
                     letterGrade = "F";
-                } else if (average < 65) {
+                } else if (average < 0.65) {
                     letterGrade = "C";
-                } else if (average < 75) {
+                } else if (average < 0.75) {
                     letterGrade = "B";
                 } else {
                     letterGrade = "A";
                 }
 
                 results[subject] = {
-                    average: average.toFixed(2),
+                    average: (average * 100).toFixed(2), // Convert to percentage for display
                     letter: letterGrade
                 };
             });
@@ -170,3 +170,5 @@
             `;
         };
     </script>
+</body>
+</html>
